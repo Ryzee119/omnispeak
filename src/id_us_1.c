@@ -836,7 +836,6 @@ void US_GetSavefiles(void)
 				(fread(&padding, sizeof(padding), 1, handle) == 1))
 				//if( fread( psfe, sizeof( US_Savefile ), 1, handle) == 1 )
 				if (strcmp(psfe->id, ck_currentEpisode->ext) == 0) /* AZ:46AA */
-					if (psfe->printXOffset == ck_currentEpisode->printXOffset)
 						valid = 1;
 
 			fclose(handle);

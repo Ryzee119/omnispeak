@@ -1,85 +1,39 @@
-Omnispeak: An reimplementation of "Commander Keen in Goodbye Galaxy!"
+## Omnispeak: An reimplementation of "Commander Keen in Goodbye Galaxy!"
 
 Omnispeak is an open-source reimplementation of Commander Keen episodes 4, 5,
 and 6. It aims to be a pixel-perfect, bug-for-bug clone of the original games,
 and is compatible with savegames from the DOS version.
 
-Omnispeak's homepage, including binary downloads, is available at:
-	https://davidgow.net/keen/omnispeak.html
+This Xbox port is a fork of [https://github.com/sulix/omnispeak/](https://github.com/sulix/omnispeak/). A link to this xbox port is here [https://github.com/Ryzee119/omnispeak](https://github.com/Ryzee119/omnispeak).
 
-== INSTALLATION ==
-To play, you'll need to include files from the original game.
+## Building
 
+Setup and install nxdk. Refer to `https://github.com/XboxDev/nxdk`
+
+Then do this:  
+```
+export NXDK_DIR=/path/to/nxdk
+git clone https://github.com/Ryzee119/omnispeak.git
+cd omnispeak
+make -f Makefile.nxdk
+```
+Compiled xbe can be found in `omnispeak/bin/`
+
+**To play, you'll also need to include files from the original game.**
 Omnispeak supports:
 	- Keen 4 v1.4 EGA
 	- Keen 5 v1.4 EGA
 	- Keen 6 v1.4 EGA
 	- Keen 6 v1.5 EGA
 
-These should be the easiest versions to get. For example, the Steam version and
-the 3DRealms version are both version 1.4. Keen 6 is not easily available, but
-you should be able to find patches which convert one version of the game to
-another. Keen 6 v1.5 fixes a few bugs, so it's probably best to use it if you
-can.
+The Steam version and the 3DRealms version contain Keen4 and Keen5 versions 1.4.
+Keen 6 is not easily available, infact cannot be purchased legally anywhere. In theory it should work on this Xbox port, but I don't own an original copy of the game so has not been tested.
 
-The shareware release of Keen 4 v1.4 is available here:
-	https://davidgow.net/keen/4keen14.zip
+You'll need to take the following files from your version of Keen, and place them in the `omnispeak/bin/keen_data` folder.  Alternatively place them in `omnispeak/keen_data` before running `make` and they will be copied over automatically and compiled into the xbox .iso.
 
-
-You'll need to take the following files from your version of Keen, and place
-them in the same directory as the 'omnispeak' binary:
-	* GAMEMAPS.CK?
-	* EGAGRAPH.CK?
-	* AUDIO.CK?
-
-You'll also need the files from the 'data' directory corresponding to your
-version of Keen. 
-
-To run the game, simply switch to the directory with the data files, and run:
-	./omnispeak
-
-You can provide Omnispeak the following command-line arguments:
-	/EPISODE <4,5,6,6v14,6v15>
-		- Runs the given episode/version of Commander Keen
-	/FULLSCREEN
-		- Starts the game in fullscreen mode
-	/FILLED
-		- Starts the game with aspect-ratio correction off.
-	/NOBORDER
-		- Starts the game with EGA overscan border emulation off.
-	/NOJOYS
-		- Disables Joystick detection.
-	/DEMOFILE <filename>
-		- Plays the demo recorded with Keen's F10+D cheat in filename.
-
-
-== COMPILING ==
-
-The source code for Omnispeak is available on GitHub:
-	https://github.com/sulix/omnispeak
-
-You'll find it in the src/ directory and built with make.
-
-Omnispeak should build fine on most Linux distributions.
-
-You'll need to have the Simple Directmedia Layer 2.0 installed, with the
-sdl2-config program somewhere in your path.
-
-When compiled, an 'omnispeak' binary will appear in 'bin/', along with
-the files from the 'data' directories.
-
-Cross-compilation for 32-bit and 64-bit Windows targets using MinGW32-Win64
-is also supported.
-
-To see a full list of build options, just run `make help`.
-
-
-== KNOWN ISSUES ==
-
-- Modding support is not implemented.
-- Mouse support is not implemented.
-- Some debug cheats are not supported.
-- New settings ("Fullscreen", "Aspect Ratio", "Overscan border") are not saved.
-- The game always redraws everything every frame.
-- Some chunks are not cached properly at load time (doors, especially)
-- No fallbacks for systems without GLSL and non-power-of-two texture support.
+The CK4/CK5/CK6 extensions are required if you want to play Keen 4, 5 or 6 respectively
+```
+GAMEMAPS.CK4 / GAMEMAPS.CK5 / GAMEMAPS.CK6
+EGAGRAPH.CK4 / EGAGRAPH.CK5 / EGAGRAPH.CK6
+AUDIO.CK4 / AUDIO.CK4 / AUDIO.CK6
+```

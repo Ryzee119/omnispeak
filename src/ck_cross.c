@@ -9,11 +9,21 @@
 #include <execinfo.h>
 #endif
 
+#ifdef NXDK
+#include <hal/debug.h>
+#endif
+
 void CK_Cross_LogMessage(CK_Log_Message_Class_T msgClass, const char *format, ...)
 {
 	// TODO: For now we simply do this.
 	va_list args;
 	va_start(args, format);
+
+	#ifdef NXDK
+	char xboxprint[256];
+	vsnprintf(xboxprint, 256, format, args);
+	debugPrint(xboxprint);
+	#endif
 	switch (msgClass)
 	{
 	case CK_LOG_MSG_NORMAL:
@@ -51,7 +61,11 @@ void CK_Cross_puts(const char *str)
 {
 	// Reason for this wrapper: Maybe a different
 	// mechanism will be used in the future.
+	#ifdef NXDK
+	debugPrint(str);
+	#else
 	puts(str);
+	#endif
 }
 
 int CK_Cross_toupper(int c)

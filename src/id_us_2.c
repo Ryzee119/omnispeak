@@ -403,25 +403,41 @@ int USL_ConfirmComm(US_CardCommand command)
 
 	result = 1;
 	ask_user = 0;
+	#ifdef NXDK
+	s3 = "BACK TO BACK OUT";
+	#else
 	s3 = "ESC TO BACK OUT";
+	#endif
 	switch (command)
 	{
 	case US_Comm_EndGame:
 		s1 = "REALLY END CURRENT GAME?";
+		#ifdef NXDK
+		s2 = "PRESS A TO END IT";
+		#else
 		s2 = "PRESS Y TO END IT";
+		#endif
 		if (game_in_progress && game_unsaved)
 			ask_user = 1;
 		break;
 
 	case US_Comm_Quit:
 		s1 = "REALLY QUIT?";
+		#ifdef NXDK
+		s2 = "PRESS A TO QUIT";
+		#else
 		s2 = "PRESS Y TO QUIT";
+		#endif
 		ask_user = 1;
 		break;
 
 	case 4:
 		s1 = "YOU'RE IN A GAME";
+		#ifdef NXDK
+		s2 = "PRESS A TO LOAD GAME";
+		#else
 		s2 = "PRESS Y TO LOAD GAME";
+		#endif
 		if (game_in_progress && game_unsaved)
 			ask_user = 1;
 		break;
@@ -430,7 +446,11 @@ int USL_ConfirmComm(US_CardCommand command)
 	case US_Comm_NewNormalGame:
 	case US_Comm_NewHardGame:
 		s1 = "YOU'RE IN A GAME";
+		#ifdef NXDK
+		s2 = "PRESS A FOR NEW GAME";
+		#else
 		s2 = "PRESS Y FOR NEW GAME";
+		#endif
 		if (game_in_progress && game_unsaved)
 			ask_user = 1;
 		break;
@@ -594,8 +614,13 @@ void US_SelectPrevItem()
 void USL_SetMenuFooter(void)
 {
 	footer_str[2] = "Arrows move";
+	#ifdef NXDK
+	footer_str[1] = "A selects";
+	footer_str[0] = (us_cardStackIndex != 0) ? "BACK to back out" : "BACK to quit";
+	#else
 	footer_str[1] = "Enter selects";
 	footer_str[0] = (us_cardStackIndex != 0) ? "ESC to back out" : "ESC to quit";
+	#endif
 	USL_SelectCardItem(us_currentCard, us_currentCard->selectedItem, 0);
 	US_DrawCards();
 }
@@ -699,10 +724,12 @@ void USL_UpdateCards(void)
 	}
 
 	/* Joystick and gamepad menu items*/
+#ifndef NXDK
 	if (true) //!joystick_present[0] )
 		ck_us_configureMenuItems[4].state |= US_IS_Disabled;
 	if (true) //!joystick_present[1] )
 		ck_us_configureMenuItems[5].state |= US_IS_Disabled;
+#endif
 #if 0
 	if ( !joystick_present[0] && !joystick_present[1] )
 		configure_menu_items[6].state |= US_IS_Disabled;
@@ -1009,7 +1036,7 @@ void US_RunCards()
 			IN_Cursor cursor;
 			IN_ReadCursor(&cursor);
 
-			controller_dy += cursor.yMotion;
+			controller_dy += cursor.yMotion * 2;
 
 			if (cursor.button0)
 			{

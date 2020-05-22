@@ -1,32 +1,55 @@
-XBE_TITLE = PrinceofPersia
+XBE_TITLE = CommanderKeen
 GEN_XISO = $(XBE_TITLE).iso
 
 NXDK_SDL = y
 
-SRCS +=	src/data.c \
-		src/lighting.c \
-		src/main.c \
-		src/menu.c \
-		src/midi.c \
-		src/opl3.c \
-		src/options.c \
-		src/replay.c \
-		src/screenshot.c \
-		src/seg000.c \
-		src/seg001.c \
-		src/seg002.c \
-		src/seg003.c \
-		src/seg004.c \
-		src/seg005.c \
-		src/seg006.c \
-		src/seg007.c \
-		src/seg008.c \
-		src/seg009.c \
-		src/stb_vorbis.c \
-		src/seqtbl.c \
-		src/xbox.c
+SRCS +=	src/ck4_map.c \
+		src/ck4_misc.c \
+		src/ck4_obj1.c \
+		src/ck4_obj2.c \
+		src/ck4_obj3.c \
+		src/ck5_map.c \
+		src/ck5_misc.c \
+		src/ck5_obj1.c \
+		src/ck5_obj2.c \
+		src/ck5_obj3.c \
+		src/ck6_map.c \
+		src/ck6_misc.c \
+		src/ck6_obj1.c \
+		src/ck6_obj2.c \
+		src/ck6_obj3.c \
+		src/ck_act.c \
+		src/ck_cross.c \
+		src/ck_game.c \
+		src/ck_inter.c \
+		src/ck_keen.c \
+		src/ck_main.c \
+		src/ck_map.c \
+		src/ck_misc.c \
+		src/ck_obj.c \
+		src/ck_phys.c \
+		src/ck_play.c \
+		src/ck_quit.c \
+		src/ck_text.c \
+		src/icon.c \
+		src/id_ca.c \
+		src/id_in.c \
+		src/id_in_sdl.c \
+		src/id_mm.c \
+		src/id_rf.c \
+		src/id_sd.c \
+		src/id_sd_sdl.c \
+		src/id_str.c \
+		src/id_ti.c \
+		src/id_us_1.c \
+		src/id_us_2.c \
+		src/id_us_textscreen.c \
+		src/id_vh.c \
+		src/id_vl.c \
+		src/id_vl_sdl2.c \
+		src/opl/dbopl.c
 
-CFLAGS += -I$(CURDIR)/src -O2
+CFLAGS += -I$(CURDIR)/src -I$(CURDIR)/src/opl -O2 -D_WIN32
 #-Wall -Wextra
 #-Wno-unused-value
 
@@ -37,5 +60,13 @@ include $(NXDK_DIR)/Makefile
 
 copy_resources:
 	@mkdir -p $(OUTPUT_DIR)
-	@cp -r $(CURDIR)/data/ $(OUTPUT_DIR)/
-	@cp $(CURDIR)/doc/gpl-3.0.txt $(OUTPUT_DIR)/LICENSE.txt
+	@mkdir -p $(OUTPUT_DIR)/keen_data
+	@mkdir -p $(OUTPUT_DIR)/omnispeak_data
+	@cp -r $(CURDIR)/xbox/ $(OUTPUT_DIR)/
+	@cp -r $(CURDIR)/keen_data/ $(OUTPUT_DIR)/
+	@cp -r $(CURDIR)/data/keen4/* $(OUTPUT_DIR)/omnispeak_data/
+	@cp -r $(CURDIR)/data/keen5/* $(OUTPUT_DIR)/omnispeak_data/
+	@cp -r $(CURDIR)/data/keen6e14/* $(OUTPUT_DIR)/omnispeak_data/
+	@cp -r $(CURDIR)/data/keen6e15/* $(OUTPUT_DIR)/omnispeak_data/
+	@cp -r $(CURDIR)/LICENSE $(OUTPUT_DIR)/LICENSE.txt
+	@cp -r $(CURDIR)/README $(OUTPUT_DIR)/README.txt

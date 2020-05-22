@@ -204,6 +204,7 @@ void SD_SDL_CallBack(void *unused, Uint8 *stream, int len)
 #if SDL_VERSION_ATLEAST(1, 3, 0)
 	memset(stream, 0, len);
 #endif
+
 	while (len)
 	{
 		if (!SD_SDL_SampleOffsetInSound && !SD_SDL_useTimerFallback)
@@ -327,6 +328,8 @@ void SD_SDL_Startup(void)
 		{
 			CK_Cross_LogMessage(CK_LOG_MSG_WARNING, "Preparation of emulated OPL chip has failed\n");
 		}
+
+
 
 		// Make sure we have all of these variables initialised to
 		// sendible values before we start the audio callback, or we can

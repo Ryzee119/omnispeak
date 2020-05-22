@@ -432,6 +432,10 @@ void save_savegame_item(US_CardItem *item)
 	i = item - ck_us_loadSaveMenuItems;
 	e = &us_savefiles[i];
 
+	#ifdef NXDK
+	strcpy(e->name, "XboxSave");
+	n = 1;
+	#else
 	/* Prompt the user to enter a name */
 	US_SetPrintColour(2);
 	//fontcolour = 2;
@@ -442,7 +446,7 @@ void save_savegame_item(US_CardItem *item)
 	/* If they entered no name, give a default */
 	if (strlen(e->name) == 0)
 		strcpy(e->name, "Untitled");
-
+	#endif
 	/* If the input was not canceled */
 	if (n != 0)
 	{
@@ -571,10 +575,12 @@ US_Card ck_us_joyconfMenu = {0, 0, &PIC_BUTTONSCARD, 0, ck_us_joyconfMenuItems, 
 US_CardItem ck_us_configureMenuItems[] = {
 	{US_ITEM_Submenu, 0, IN_SC_S, "SOUND", US_Comm_None, &ck_us_soundMenu, 0, 0},
 	{US_ITEM_Submenu, 0, IN_SC_M, "MUSIC", US_Comm_None, &ck_us_musicMenu, 0, 0},
+#ifndef NXDK
 	{US_ITEM_Submenu, 0, IN_SC_O, "OPTIONS", US_Comm_None, &ck_us_optionsMenu, 0, 0},
 	{US_ITEM_Submenu, US_IS_Gap, IN_SC_K, "KEYBOARD", US_Comm_None, &ck_us_keyboardMenu, 0, 0},
 	{US_ITEM_Submenu, 0, IN_SC_One, "USE JOYSTICK #1", US_Comm_None, &ck_us_joystick1Menu, 0, 0},
 	{US_ITEM_Submenu, 0, IN_SC_Two, "USE JOYSTICK #2", US_Comm_None, &ck_us_joystick2Menu, 0, 0},
+#endif
 //{ US_ITEM_Submenu, 0, IN_SC_G, "", US_Comm_None, &ck_us_gamepadMenu, 0, 0 },
 #ifdef EXTRA_JOYSTICK_OPTIONS
 	{US_ITEM_Submenu, 0, IN_SC_J, "JOYSTICK CONFIGURATION", US_Comm_None, &ck_us_joyconfMenu, 0, 0},
@@ -744,7 +750,9 @@ bool CK_US_KeyboardMenuProc(US_CardMsg msg, US_CardItem *item)
 	// Set keyboard as game controller if this menu is entered
 	if (msg == US_MSG_CardEntered)
 	{
+		#ifndef NXDK
 		IN_SetControlType(0, IN_ctrl_Keyboard1);
+		#endif
 		CK_US_UpdateOptionsMenus();
 	}
 	return false;
@@ -1273,9 +1281,13 @@ void CK_US_UpdateOptionsMenus(void)
 {
 
 	ck_us_optionsMenuItems[0].caption = ck_scoreBoxEnabled ? "SCORE BOX (ON)" : "SCORE BOX (OFF)";
+	#ifndef NXDK
 	ck_us_optionsMenuItems[1].caption = ck_twoButtonFiring ? "TWO-BUTTON FIRING (ON)" : "TWO-BUTTON FIRING (OFF)";
+	#endif
 	ck_us_optionsMenuItems[2].caption = ck_fixJerkyMotion ? "FIX JERKY MOTION (ON)" : "FIX JERKY MOTION (OFF)";
+	#ifndef NXDK
 	ck_us_optionsMenuItems[3].caption = ck_svgaCompatibility ? "SVGA COMPATIBILITY (ON)" : "SVGA COMPATIBILITY (OFF)";
+	#endif
 #ifdef EXTRA_GRAPHICS_OPTIONS
 	ck_us_optionsMenuItems[4].caption = vl_isFullScreen ? "FULLSCREEN (ON)" : "FULLSCREEN (OFF)";
 	ck_us_optionsMenuItems[5].caption = vl_isAspectCorrected ? "CORRECT ASPECT RATIO (ON)" : "CORRECT ASPECT RATIO (OFF)";
@@ -1289,7 +1301,7 @@ void CK_US_UpdateOptionsMenus(void)
 	ck_us_buttonsMenuItems[2].state &= ~US_IS_Disabled;
 	if (ck_twoButtonFiring)
 		ck_us_buttonsMenuItems[2].state |= US_IS_Disabled;
-
+#ifndef NXDK
 	if (IN_JoyPresent(0))
 		ck_us_configureMenuItems[4].state &= ~US_IS_Disabled;
 	else
@@ -1298,6 +1310,7 @@ void CK_US_UpdateOptionsMenus(void)
 		ck_us_configureMenuItems[5].state &= ~US_IS_Disabled;
 	else
 		ck_us_configureMenuItems[5].state |= US_IS_Disabled;
+#endif
 #ifdef EXTRA_JOYSTICK_OPTIONS
 	CK_US_SetJoystickName(&ck_us_configureMenuItems[4], 0);
 	CK_US_SetJoystickName(&ck_us_configureMenuItems[5], 1);

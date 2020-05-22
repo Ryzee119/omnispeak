@@ -651,7 +651,6 @@ void SD_Startup(void)
 	{
 		return;
 	}
-
 	sd_backend = SD_Impl_GetBackend();
 
 	if (sd_backend)
@@ -667,7 +666,6 @@ void SD_Startup(void)
 
 	SD_SetSoundMode(sdm_Off);
 	SD_SetMusicMode(smm_Off);
-
 	if (!alNoCheck)
 		AdLibPresent = SDL_DetectAdlib(true);
 	/* FIXME? Otherwise what is the value of AdLibPresent? */

@@ -47,13 +47,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 // =================================
 #ifndef CK_VANILLA
 // The Fullscreen/Aspect Ratio/etc options
-#define EXTRA_GRAPHICS_OPTIONS
+//#define EXTRA_GRAPHICS_OPTIONS
 
 // Support for rebinding 'Status'
-#define EXTRA_KEYBOARD_OPTIONS
+//#define EXTRA_KEYBOARD_OPTIONS
 
 // Joystick names, Joystick Configuration
-#define EXTRA_JOYSTICK_OPTIONS
+//#define EXTRA_JOYSTICK_OPTIONS
 
 // QuickSave
 #define QUICKSAVE_ENABLED

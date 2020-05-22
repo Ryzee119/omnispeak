@@ -36,6 +36,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef NXDK
+#include <assert.h>
+#include <windows.h>
+#include <nxdk/mount.h>
+#include <hal/xbox.h>
+#include <hal/video.h>
+extern uint8_t* _fb;
+#endif
+
 #ifdef WITH_SDL
 #include <SDL.h> // For main (SDL_main) function prototype
 #endif
@@ -344,12 +353,20 @@ void CK_InitGame()
 	US_Startup();
 
 	// Wolf loads fonts here, but we do it in CA_Startup()?
-
 	RF_Startup();
 
 	VL_ColorBorder(3);
 	VL_ClearScreen(0);
 	VL_Present();
+
+	#ifdef NXDK //Force the correct controller config
+	IN_SetControlType(0, IN_ctrl_Joystick1);
+	IN_SetControlType(1, IN_ctrl_Joystick1);
+	IN_SetJoyConf(IN_joy_jump, IN_joy_jump);
+	IN_SetJoyConf(IN_joy_pogo, IN_joy_pogo);
+	IN_SetJoyConf(IN_joy_fire, IN_joy_fire);
+	IN_SetJoyConf(IN_joy_deadzone, 10);
+	#endif
 
 	// Create a surface for the dropdown menu
 	ck_statusSurface = VL_CreateSurface(RF_BUFFER_WIDTH_PIXELS, STATUS_H + 16 + 16);
@@ -373,7 +390,6 @@ void CK_DemoLoop()
 	 * This was implemented by having TED launch keen with the /TEDLEVEL xx
 	 * parameter, where xx is the level number.
 	 */
-
 	if (us_tedLevel)
 	{
 		CK_NewGame();
@@ -634,9 +650,56 @@ CK_EpisodeDef *ck_episodes[] = {
 
 int main(int argc, char *argv[])
 {
+
 	// Send the cmd-line args to the User Manager.
 	us_argc = argc;
 	us_argv = (const char **)argv;
+
+#ifdef NXDK
+	argc = 1;
+	us_argc = argc;
+	us_argv = malloc(1);
+	us_argv[0] = malloc(1);
+	size_t fb_size = 640 * 480 * 4;
+	_fb = (uint8_t*)MmAllocateContiguousMemoryEx(fb_size,
+												0,
+												0xFFFFFFFF,
+												0x1000,
+												PAGE_READWRITE | PAGE_WRITECOMBINE);
+	memset(_fb, 0x00, fb_size);
+	XVideoSetMode(640, 480, 32, REFRESH_DEFAULT);
+
+	BOOL mounted = nxMountDrive('E', "\\Device\\Harddisk0\\Partition1\\");
+	assert(mounted);
+	CreateDirectoryA("E:\\UDATA\\Keen", NULL);
+	CreateDirectoryA("E:\\UDATA\\Keen\\Saves", NULL);
+	CreateDirectoryA("E:\\UDATA\\Keen\\Settings", NULL);
+
+	//Copy title image to game profile
+	FILE* titleImageFileSrc = fopen("D:\\xbox\\TitleImage.xbx", "rb");
+	FILE* titleImageFileDest = fopen("E:\\UDATA\\Keen\\TitleImage.xbx", "wb");
+	int c = fgetc(titleImageFileSrc);
+	while (c != EOF){
+		fputc(c, titleImageFileDest);
+		c = fgetc(titleImageFileSrc);
+	}
+	fclose(titleImageFileDest);
+	fclose(titleImageFileSrc);
+
+	FILE* fp;
+	fp = fopen("E:\\UDATA\\Keen\\TitleMeta.xbx", "wb");
+	fprintf(fp, "TitleName=Commander Keen (omnispeak)\r\n");
+	fclose(fp);
+
+	fp = fopen("E:\\UDATA\\Keen\\Saves\\SaveMeta.xbx", "wb");
+	fprintf(fp, "Name= Saves\r\n");
+	fclose(fp);
+
+	fp = fopen("E:\\UDATA\\Keen\\Settings\\SaveMeta.xbx", "wb");
+	fprintf(fp, "Name= Settings\r\n");
+	fclose(fp);
+
+#endif
 
 	// Default to the first episode with all files present.
 	// If no episodes are found, we default to Keen 4, in order
@@ -655,6 +718,16 @@ int main(int argc, char *argv[])
 	bool isAspectCorrected = true;
 	bool hasBorder = true;
 	bool overrideCopyProtection = false;
+
+#ifdef NXDK
+	isFullScreen = true;
+	isAspectCorrected = true;
+	hasBorder = false;
+	overrideCopyProtection = true;
+	in_disableJoysticks = false;
+	//ck_currentEpisode = &ck5_episode;
+#endif
+
 #ifdef CK_ENABLE_PLAYLOOP_DUMPER
 	const char *dumperFilename = NULL;
 #endif
@@ -738,7 +811,6 @@ int main(int argc, char *argv[])
 		ck_currentEpisode->hasCreatureQuestion = false;
 
 	CK_InitGame();
-
 	for (int i = 1; i < argc; ++i)
 	{
 		if (!CK_Cross_strcasecmp(argv[i], "/DEMOFILE"))

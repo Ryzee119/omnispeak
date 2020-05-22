@@ -27,6 +27,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #define IN_MAX_JOYSTICKS 2
 
+#ifdef NXDK
+SDL_GameController *in_gamecontrollers[IN_MAX_JOYSTICKS];
+#endif
 SDL_Joystick *in_joysticks[IN_MAX_JOYSTICKS];
 bool in_joystickPresent[IN_MAX_JOYSTICKS];
 
@@ -296,6 +299,10 @@ static void IN_SDL_HandleSDLEvent(SDL_Event *event)
 
 	IN_ScanCode sc;
 	static bool special;
+#ifdef NXDK
+	SDL_JoyButtonEvent* jb_button;
+	SDL_JoyHatEvent* jb_hat;
+#endif
 
 	switch (event->type)
 	{
@@ -318,6 +325,43 @@ static void IN_SDL_HandleSDLEvent(SDL_Event *event)
 		sc = INL_SDLKeySymToScanCode(&event->key.keysym);
 		IN_HandleKeyUp(sc, false);
 		break;
+#ifdef NXDK
+	case SDL_JOYBUTTONDOWN:
+		sc = IN_SC_None;
+		//Xbox: We need to inject keyboard presses where the code doesnt
+		//otherwise support joystick inputs.
+		jb_button = (SDL_JoyButtonEvent*)event;
+		if (jb_button->button == 7) //START
+			sc = IN_SC_Enter;
+		if (jb_button->button == 6) //BACK
+			sc = IN_SC_Escape;
+		if (jb_button->button == 3) //Y - Open Help Menu
+			sc = IN_SC_F1;
+
+		if(event->type == SDL_JOYBUTTONDOWN && sc != IN_SC_None){
+			IN_HandleKeyDown(sc, false);
+		}else if (sc != IN_SC_None){
+			IN_HandleKeyUp(sc, false);
+		}
+		break;
+	case SDL_JOYHATMOTION:
+		sc = IN_SC_None;
+		jb_hat = (SDL_JoyHatEvent*)event;
+		if (jb_hat->value & SDL_HAT_UP)
+			sc = IN_SC_UpArrow;
+		if (jb_hat->value & SDL_HAT_DOWN)
+			sc = IN_SC_DownArrow;
+		if (jb_hat->value & SDL_HAT_LEFT)
+			sc = IN_SC_LeftArrow;
+		if (jb_hat->value & SDL_HAT_RIGHT)
+			sc = IN_SC_RightArrow;
+
+		if(sc != IN_SC_None){
+			IN_HandleKeyDown(sc, false);
+		}
+
+		break;
+#endif
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	case SDL_JOYDEVICEADDED:
 		INL_StartJoy(event->jdevice.which);
@@ -355,10 +399,15 @@ void IN_SDL_Startup(bool disableJoysticks)
 {
 	if (!disableJoysticks)
 	{
+		#ifdef NXDK
+		SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
+		SDL_Init(SDL_INIT_GAMECONTROLLER);
+		#endif
 		SDL_Init(SDL_INIT_JOYSTICK);
 		int numJoys = SDL_NumJoysticks();
 		for (int i = 0; i < numJoys; ++i)
 			INL_StartJoy(i);
+
 	}
 }
 
@@ -373,6 +422,7 @@ bool IN_SDL_StartJoy(int joystick)
 	// On SDL2, with hotplug support, we can get hotplug events for joysticks
 	// we've already got open. Check we don't have any duplicates here.
 	SDL_JoystickGUID newGUID = SDL_JoystickGetDeviceGUID(joystick);
+
 	for (int i = 0; i < IN_MAX_JOYSTICKS; ++i)
 	{
 		if (in_joystickPresent[i])
@@ -397,18 +447,26 @@ bool IN_SDL_StartJoy(int joystick)
 	if (joystick_id == -1)
 		return false;
 
+	#ifdef NXDK
+	in_gamecontrollers[joystick_id] = SDL_GameControllerOpen(joystick);
+	in_joysticks[joystick_id] = SDL_GameControllerGetJoystick(in_gamecontrollers[joystick_id]);
+	#else
 	in_joysticks[joystick_id] = SDL_JoystickOpen(joystick);
+	#endif
 
 	in_joystickPresent[joystick_id] = true;
-
 	return true;
 }
 
 void IN_SDL_StopJoy(int joystick)
 {
 	in_joystickPresent[joystick] = false;
-
+	#ifdef NXDK
+	SDL_GameControllerClose(in_gamecontrollers[joystick]);
+	in_joysticks[joystick] = NULL;
+	#else
 	SDL_JoystickClose(in_joysticks[joystick]);
+	#endif
 }
 
 bool IN_SDL_JoyPresent(int joystick)
@@ -422,11 +480,28 @@ void IN_SDL_JoyGetAbs(int joystick, int *x, int *y)
 		*x = SDL_JoystickGetAxis(in_joysticks[joystick], 0);
 	if (y)
 		*y = SDL_JoystickGetAxis(in_joysticks[joystick], 1);
+
+	#ifdef NXDK //Use D-PAD aswell as analog stick
+	uint8_t hat = SDL_JoystickGetHat(in_joysticks[joystick], 0);
+	if(hat & SDL_HAT_UP)
+		*y=-32768;
+	if(hat & SDL_HAT_DOWN)
+		*y=32767;
+	if(hat & SDL_HAT_LEFT)
+		*x=-32768;
+	if(hat & SDL_HAT_RIGHT)
+		*x=32767;
+	#endif
 }
 
 uint16_t IN_SDL_JoyGetButtons(int joystick)
 {
 	uint16_t mask = 0;
+	#ifdef NXDK
+	mask |= SDL_GameControllerGetButton(in_gamecontrollers[joystick], SDL_CONTROLLER_BUTTON_A) << IN_joy_jump;
+	mask |= SDL_GameControllerGetButton(in_gamecontrollers[joystick], SDL_CONTROLLER_BUTTON_B) << IN_joy_fire;
+	mask |= SDL_GameControllerGetButton(in_gamecontrollers[joystick], SDL_CONTROLLER_BUTTON_X) << IN_joy_pogo;
+	#else
 	int i, n = SDL_JoystickNumButtons(in_joysticks[joystick]);
 	if (n > 16)
 		n = 16;  /* the mask is just 16 bits wide anyway */
@@ -434,6 +509,7 @@ uint16_t IN_SDL_JoyGetButtons(int joystick)
 	{
 		mask |= SDL_JoystickGetButton(in_joysticks[joystick], i) << i;
 	}
+	#endif
 	return mask;
 }
 

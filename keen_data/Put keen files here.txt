@@ -1,0 +1,14 @@
+These files are required to play Keen4
+GAMEMAPS.CK4
+EGAGRAPH.CK4
+AUDIO.CK4
+
+These files are required to play Keen6
+GAMEMAPS.CK5
+EGAGRAPH.CK5
+AUDIO.CK5
+
+These files are required to play Keen6
+GAMEMAPS.CK6
+EGAGRAPH.CK6
+AUDIO.CK6

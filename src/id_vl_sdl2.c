@@ -33,8 +33,11 @@ static void VL_SDL2_SetVideoMode(int mode)
 		SDL_SetWindowMinimumSize(vl_sdl2_window, VL_VGA_GFX_SCALED_WIDTH_PLUS_BORDER / VL_VGA_GFX_WIDTH_SCALEFACTOR, VL_VGA_GFX_SCALED_HEIGHT_PLUS_BORDER / VL_VGA_GFX_HEIGHT_SCALEFACTOR);
 
 		//VL_SDL2GL_SetIcon(vl_sdl2_window);
-
+		#ifdef NXDK
+		vl_sdl2_renderer = SDL_CreateRenderer(vl_sdl2_window, -1, SDL_RENDERER_SOFTWARE);
+		#else
 		vl_sdl2_renderer = SDL_CreateRenderer(vl_sdl2_window, -1, SDL_RENDERER_ACCELERATED);
+		#endif
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
 		vl_sdl2_texture = SDL_CreateTexture(vl_sdl2_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, VL_EGAVGA_GFX_WIDTH, VL_EGAVGA_GFX_HEIGHT);
 
