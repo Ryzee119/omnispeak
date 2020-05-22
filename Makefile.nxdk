@@ -69,4 +69,4 @@ copy_resources:
 	@cp -r $(CURDIR)/data/keen6e14/* $(OUTPUT_DIR)/omnispeak_data/
 	@cp -r $(CURDIR)/data/keen6e15/* $(OUTPUT_DIR)/omnispeak_data/
 	@cp -r $(CURDIR)/LICENSE $(OUTPUT_DIR)/LICENSE.txt
-	@cp -r $(CURDIR)/README $(OUTPUT_DIR)/README.txt
+	@cp -r $(CURDIR)/README.md $(OUTPUT_DIR)/README.txt

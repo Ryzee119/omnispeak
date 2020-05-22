@@ -19,21 +19,25 @@ make -f Makefile.nxdk
 ```
 Compiled xbe can be found in `omnispeak/bin/`
 
-**To play, you'll also need to include files from the original game.**
+**To play, you'll also need to include files from the original game.**  
 Omnispeak supports:
-	- Keen 4 v1.4 EGA
-	- Keen 5 v1.4 EGA
-	- Keen 6 v1.4 EGA
-	- Keen 6 v1.5 EGA
+* Keen 4 v1.4 EGA
+* Keen 5 v1.4 EGA
+* Keen 6 v1.4 EGA
+* Keen 6 v1.5 EGA
 
-The Steam version and the 3DRealms version contain Keen4 and Keen5 versions 1.4.
+The [Steam version](http://store.steampowered.com/app/9180/) and the [3DRealms](https://3drealms.com/catalog/commander-keen-goodbye-galaxy_8/) version contain Keen4 and Keen5 versions 1.4.  
 Keen 6 is not easily available, infact cannot be purchased legally anywhere. In theory it should work on this Xbox port, but I don't own an original copy of the game so has not been tested.
 
 You'll need to take the following files from your version of Keen, and place them in the `omnispeak/bin/keen_data` folder.  Alternatively place them in `omnispeak/keen_data` before running `make` and they will be copied over automatically and compiled into the xbox .iso.
 
-The CK4/CK5/CK6 extensions are required if you want to play Keen 4, 5 or 6 respectively
 ```
-GAMEMAPS.CK4 / GAMEMAPS.CK5 / GAMEMAPS.CK6
-EGAGRAPH.CK4 / EGAGRAPH.CK5 / EGAGRAPH.CK6
-AUDIO.CK4 / AUDIO.CK4 / AUDIO.CK6
+To play Keen4 you need these files:
+GAMEMAPS.CK4, EGAGRAPH.CK4, AUDIO.CK4
+
+To play Keen5 you need these files:
+GAMEMAPS.CK5, EGAGRAPH.CK5, AUDIO.CK5
+
+To play Keen6 you need these files:
+GAMEMAPS.CK6, EGAGRAPH.CK6, AUDIO.CK6
 ```
