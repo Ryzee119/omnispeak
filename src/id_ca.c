@@ -44,6 +44,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <unistd.h>
 #endif
 
+#ifdef NXDK
+#include <hal/debug.h>
+#endif
+
 #define CA_THREEBYTEHEADERS
 
 #ifndef _WIN32
@@ -1175,6 +1179,10 @@ void CA_AssertFileExists(char *filename)
 		// better safe than sorry.
 		_snprintf(message, 127, "Could not find %s. Please copy it into the Omnispeak directory.", filename);
 		message[127] = '\0';
+		#ifdef NXDK
+		debugPrint(message);
+		Sleep(5000);
+		#endif
 #else
 		snprintf(message, 128, "Could not find %s. Please copy it into the Omnispeak directory.", filename);
 #endif

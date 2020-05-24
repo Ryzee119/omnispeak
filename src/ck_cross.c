@@ -19,7 +19,7 @@ void CK_Cross_LogMessage(CK_Log_Message_Class_T msgClass, const char *format, ..
 	va_list args;
 	va_start(args, format);
 
-	#ifdef NXDK
+	#if defined(NXDK) && defined(NXDK_DEBUG)
 	char xboxprint[256];
 	vsnprintf(xboxprint, 256, format, args);
 	debugPrint(xboxprint);

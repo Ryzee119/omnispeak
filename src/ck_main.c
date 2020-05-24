@@ -662,14 +662,14 @@ int main(int argc, char *argv[])
 	us_argc = argc;
 	us_argv = malloc(sizeof(const char *));
 	us_argv[0] = malloc(sizeof(const char *));
-	size_t fb_size = 640 * 480 * 4;
+	size_t fb_size = 640 * 480 * 2;
 	_fb = (uint8_t*)MmAllocateContiguousMemoryEx(fb_size,
 												0,
 												0xFFFFFFFF,
 												0x1000,
 												PAGE_READWRITE | PAGE_WRITECOMBINE);
 	memset(_fb, 0x00, fb_size);
-	XVideoSetMode(640, 480, 32, REFRESH_DEFAULT);
+	XVideoSetMode(640, 480, 16, REFRESH_DEFAULT);
 
 	BOOL mounted = nxMountDrive('E', "\\Device\\Harddisk0\\Partition1\\");
 	assert(mounted);

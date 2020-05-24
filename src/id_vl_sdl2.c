@@ -39,16 +39,16 @@ static void VL_SDL2_SetVideoMode(int mode)
 		vl_sdl2_renderer = SDL_CreateRenderer(vl_sdl2_window, -1, SDL_RENDERER_ACCELERATED);
 		#endif
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
-		vl_sdl2_texture = SDL_CreateTexture(vl_sdl2_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, VL_EGAVGA_GFX_WIDTH, VL_EGAVGA_GFX_HEIGHT);
+		vl_sdl2_texture = SDL_CreateTexture(vl_sdl2_renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STREAMING, VL_EGAVGA_GFX_WIDTH, VL_EGAVGA_GFX_HEIGHT);
 
 		vl_sdl2_palette = SDL_AllocPalette(256);
 
 		// As we can't do on-GPU palette conversions with SDL2,
 		// we do a PAL8->RGBA conversion of the visible area to this surface each frame.
-		vl_sdl2_stagingSurface = SDL_CreateRGBSurface(0, VL_EGAVGA_GFX_WIDTH, VL_EGAVGA_GFX_HEIGHT, 32, 0, 0, 0, 0);
+		vl_sdl2_stagingSurface = SDL_CreateRGBSurface(0, VL_EGAVGA_GFX_WIDTH, VL_EGAVGA_GFX_HEIGHT, 16, 0, 0, 0, 0);
 
-		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
-		vl_sdl2_scaledTarget = SDL_CreateTexture(vl_sdl2_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, VL_EGAVGA_GFX_WIDTH * 3, VL_EGAVGA_GFX_HEIGHT * 3);
+		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
+		vl_sdl2_scaledTarget = SDL_CreateTexture(vl_sdl2_renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_TARGET, VL_EGAVGA_GFX_WIDTH * 3, VL_EGAVGA_GFX_HEIGHT * 3);
 		SDL_ShowCursor(0);
 	}
 	else
@@ -302,8 +302,8 @@ static void VL_SDL2_ResizeWindow()
 		vl_sdl2_scaledTarget = 0;
 	}
 
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
-	vl_sdl2_scaledTarget = SDL_CreateTexture(vl_sdl2_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, vl_integerWidth, vl_integerHeight);
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
+	vl_sdl2_scaledTarget = SDL_CreateTexture(vl_sdl2_renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_TARGET, vl_integerWidth, vl_integerHeight);
 }
 
 static void VL_SDL2_Present(void *surface, int scrlX, int scrlY, bool singleBuffered)
