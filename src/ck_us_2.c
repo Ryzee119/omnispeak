@@ -504,7 +504,6 @@ US_Card ck_us_joyMotionModeMenu = {0, 0, 0, 0, 0, &CK_US_JoyMotionModeMenuProc, 
 US_CardItem ck_us_optionsMenuItems[] = {
 #ifdef NXDK
 	{US_ITEM_Submenu, 0, IN_SC_S, "", US_Comm_None, &ck_us_scoreBoxMenu, 0, 0},
-	{US_ITEM_Submenu, 0, IN_SC_T, "", US_Comm_None, &ck_us_fixJerkyMotionMenu, 0, 0},
 	{US_ITEM_Submenu, 0, IN_SC_C, "", US_Comm_None, &ck_us_borderMenu, 0, 0},
 #else
 	{US_ITEM_Submenu, 0, IN_SC_S, "", US_Comm_None, &ck_us_scoreBoxMenu, 0, 0},
@@ -1288,8 +1287,7 @@ void CK_US_UpdateOptionsMenus(void)
 {
 #ifdef NXDK
 	ck_us_optionsMenuItems[0].caption = ck_scoreBoxEnabled ? "SCORE BOX (ON)" : "SCORE BOX (OFF)";
-	ck_us_optionsMenuItems[1].caption = ck_fixJerkyMotion ? "FIX JERKY MOTION (ON)" : "FIX JERKY MOTION (OFF)";
-	ck_us_optionsMenuItems[2].caption = vl_hasOverscanBorder ? "OVERSCAN BORDER (ON)" : "OVERSCAN BORDER (OFF)";
+	ck_us_optionsMenuItems[1].caption = vl_hasOverscanBorder ? "OVERSCAN BORDER (ON)" : "OVERSCAN BORDER (OFF)";
 #else
 	ck_us_optionsMenuItems[0].caption = ck_scoreBoxEnabled ? "SCORE BOX (ON)" : "SCORE BOX (OFF)";
 	ck_us_optionsMenuItems[1].caption = ck_twoButtonFiring ? "TWO-BUTTON FIRING (ON)" : "TWO-BUTTON FIRING (OFF)";
