@@ -39,9 +39,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifdef NXDK
 #include <assert.h>
 #include <windows.h>
+#include <SDL.h>
 #include <nxdk/mount.h>
 #include <hal/xbox.h>
 #include <hal/video.h>
+#include <hal/debug.h>
 extern uint8_t* _fb;
 #endif
 
@@ -658,8 +660,8 @@ int main(int argc, char *argv[])
 #ifdef NXDK
 	argc = 1;
 	us_argc = argc;
-	us_argv = malloc(1);
-	us_argv[0] = malloc(1);
+	us_argv = malloc(sizeof(const char *));
+	us_argv[0] = malloc(sizeof(const char *));
 	size_t fb_size = 640 * 480 * 4;
 	_fb = (uint8_t*)MmAllocateContiguousMemoryEx(fb_size,
 												0,
@@ -725,7 +727,50 @@ int main(int argc, char *argv[])
 	hasBorder = false;
 	overrideCopyProtection = true;
 	in_disableJoysticks = false;
-	//ck_currentEpisode = &ck5_episode;
+
+	//Let's make a quick and simple menu to select your Keen Game
+	extern int nextRow;
+	extern int nextCol;
+	SDL_Init(SDL_INIT_GAMECONTROLLER);
+	SDL_GameController* gamepad = SDL_GameControllerOpen(0);
+	SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
+	const char msg0[] = "Omnispeak - A Commander Keen Reimplementation\n\n\n";
+	const char msg1[] = "Press A to start Keen Episode 4\n\n";
+	const char msg2[] = "Press B to start Keen Episode 5\n\n";
+	const char msg3[] = "Press X to start Keen Episode 6 v1.4\n\n";
+	const char msg4[] = "Press Y to start Keen Episode 6 v1.5\n\n";
+	const char msg5[] = "See https://github.com/Ryzee119/omnispeak";
+	debugPrint("\n\n");
+	nextCol = 640/2 - (strlen(msg0) * 8 / 2); debugPrint(msg0);
+	nextCol = 640/2 - (strlen(msg1) * 8 / 2); debugPrint(msg1);
+	nextCol = 640/2 - (strlen(msg2) * 8 / 2); debugPrint(msg2);
+	nextCol = 640/2 - (strlen(msg3) * 8 / 2); debugPrint(msg3);
+	nextCol = 640/2 - (strlen(msg4) * 8 / 2); debugPrint(msg4);
+	nextRow = 480 * 0.85;
+	nextCol = 640/2 - (strlen(msg5) * 8 / 2); debugPrint(msg5);
+	while(1){
+		SDL_GameControllerUpdate();
+		if(SDL_GameControllerGetButton(gamepad, SDL_CONTROLLER_BUTTON_A)){
+			ck_currentEpisode = &ck4_episode;
+			break;
+		}
+		if(SDL_GameControllerGetButton(gamepad, SDL_CONTROLLER_BUTTON_B)){
+			ck_currentEpisode = &ck5_episode;
+			break;
+		}
+		if(SDL_GameControllerGetButton(gamepad, SDL_CONTROLLER_BUTTON_X)){
+			ck_currentEpisode = &ck6v14e_episode;
+			break;
+		}
+		if(SDL_GameControllerGetButton(gamepad, SDL_CONTROLLER_BUTTON_Y)){
+			ck_currentEpisode = &ck6v15e_episode;
+			break;
+		}
+		Sleep(10);
+	}
+	debugClearScreen();
+	SDL_GameControllerClose(0);
+	SDL_Quit();
 #endif
 
 #ifdef CK_ENABLE_PLAYLOOP_DUMPER
