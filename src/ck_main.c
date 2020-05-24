@@ -744,7 +744,7 @@ int main(int argc, char *argv[])
 	nextCol = 640/2 - (strlen(msg0) * 8 / 2); debugPrint(msg0);
 	nextCol = 640/2 - (strlen(msg1) * 8 / 2); debugPrint(msg1);
 	nextCol = 640/2 - (strlen(msg2) * 8 / 2); debugPrint(msg2);
-	nextCol = 640/2 - (strlen(msg3) * 8 / 2); debugPrint(msg3);
+	//nextCol = 640/2 - (strlen(msg3) * 8 / 2); debugPrint(msg3);
 	nextCol = 640/2 - (strlen(msg4) * 8 / 2); debugPrint(msg4);
 	nextRow = 480 * 0.85;
 	nextCol = 640/2 - (strlen(msg5) * 8 / 2); debugPrint(msg5);
@@ -758,10 +758,10 @@ int main(int argc, char *argv[])
 			ck_currentEpisode = &ck5_episode;
 			break;
 		}
-		if(SDL_GameControllerGetButton(gamepad, SDL_CONTROLLER_BUTTON_X)){
-			ck_currentEpisode = &ck6v14e_episode;
-			break;
-		}
+		//if(SDL_GameControllerGetButton(gamepad, SDL_CONTROLLER_BUTTON_X)){
+		//	ck_currentEpisode = &ck6v14e_episode;
+		//	break;
+		//}
 		if(SDL_GameControllerGetButton(gamepad, SDL_CONTROLLER_BUTTON_Y)){
 			ck_currentEpisode = &ck6v15e_episode;
 			break;

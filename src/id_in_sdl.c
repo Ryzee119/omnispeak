@@ -453,6 +453,7 @@ bool IN_SDL_StartJoy(int joystick)
 	#endif
 
 	in_joystickPresent[joystick_id] = true;
+
 	return true;
 }
 
