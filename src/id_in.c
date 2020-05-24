@@ -587,7 +587,6 @@ void IN_ReadCursor(IN_Cursor *cursor)
 	cursor->button1 = false;
 	cursor->xMotion = IN_motion_None;
 	cursor->yMotion = IN_motion_None;
-
 	if (in_controlType == IN_ctrl_Joystick1 || in_controlType == IN_ctrl_Joystick2)
 	{
 		int joy = in_controlType - IN_ctrl_Joystick1;

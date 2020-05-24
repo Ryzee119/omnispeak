@@ -357,7 +357,7 @@ void CK_InitGame()
 	// Wolf loads fonts here, but we do it in CA_Startup()?
 	RF_Startup();
 
-	VL_ColorBorder(3);
+	VL_ColorBorder(0);
 	VL_ClearScreen(0);
 	VL_Present();
 
@@ -392,6 +392,7 @@ void CK_DemoLoop()
 	 * This was implemented by having TED launch keen with the /TEDLEVEL xx
 	 * parameter, where xx is the level number.
 	 */
+
 	if (us_tedLevel)
 	{
 		CK_NewGame();
@@ -652,7 +653,6 @@ CK_EpisodeDef *ck_episodes[] = {
 
 int main(int argc, char *argv[])
 {
-
 	// Send the cmd-line args to the User Manager.
 	us_argc = argc;
 	us_argv = (const char **)argv;
@@ -724,7 +724,7 @@ int main(int argc, char *argv[])
 #ifdef NXDK
 	isFullScreen = true;
 	isAspectCorrected = true;
-	hasBorder = false;
+	hasBorder = true;
 	overrideCopyProtection = true;
 	in_disableJoysticks = false;
 
@@ -856,6 +856,7 @@ int main(int argc, char *argv[])
 		ck_currentEpisode->hasCreatureQuestion = false;
 
 	CK_InitGame();
+
 	for (int i = 1; i < argc; ++i)
 	{
 		if (!CK_Cross_strcasecmp(argv[i], "/DEMOFILE"))

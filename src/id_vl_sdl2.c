@@ -5,6 +5,10 @@
 #include "id_vl_private.h"
 #include "ck_cross.h"
 
+#ifdef NXDK
+#include <hal/video.h>
+#endif
+
 static SDL_Window *vl_sdl2_window;
 static SDL_Renderer *vl_sdl2_renderer;
 static SDL_Texture *vl_sdl2_texture;
@@ -333,6 +337,9 @@ static void VL_SDL2_Present(void *surface, int scrlX, int scrlY, bool singleBuff
 	SDL_RenderSetViewport(vl_sdl2_renderer, 0);
 	SDL_RenderCopy(vl_sdl2_renderer, vl_sdl2_scaledTarget, 0, &fullRect);
 
+	#ifdef NXDK
+	XVideoWaitForVBlank();
+	#endif
 	SDL_RenderPresent(vl_sdl2_renderer);
 }
 

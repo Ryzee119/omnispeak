@@ -407,7 +407,6 @@ void IN_SDL_Startup(bool disableJoysticks)
 		int numJoys = SDL_NumJoysticks();
 		for (int i = 0; i < numJoys; ++i)
 			INL_StartJoy(i);
-
 	}
 }
 
@@ -422,7 +421,6 @@ bool IN_SDL_StartJoy(int joystick)
 	// On SDL2, with hotplug support, we can get hotplug events for joysticks
 	// we've already got open. Check we don't have any duplicates here.
 	SDL_JoystickGUID newGUID = SDL_JoystickGetDeviceGUID(joystick);
-
 	for (int i = 0; i < IN_MAX_JOYSTICKS; ++i)
 	{
 		if (in_joystickPresent[i])

@@ -65,7 +65,6 @@ size_t CA_GetFileSize(char *filename)
 
 bool CAL_AdjustFilenameCase(char *filename)
 {
-
 	// Quickly check to see if the file exists with the current case.
 	struct stat fileStat;
 	if (!stat(filename, &fileStat))
