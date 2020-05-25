@@ -16,8 +16,9 @@ git fetch origin pull/27/head:pr27
 git checkout pr27
 ```
 
-Then do this:  
+Then do this from your home directoy:  
 ```
+cd~
 export NXDK_DIR=/path/to/nxdk
 git clone https://github.com/Ryzee119/omnispeak.git
 cd omnispeak
