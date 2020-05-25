@@ -299,7 +299,11 @@ void SD_SDL_Startup(void)
 	}
 	else
 	{
+		#ifdef NXDK
+		SD_SDL_AudioSpec.freq = 48000; // Xbox
+		#else
 		SD_SDL_AudioSpec.freq = 49716; // OPL rate
+		#endif
 		SD_SDL_AudioSpec.format = AUDIO_S16;
 		SD_SDL_AudioSpec.channels = 1;
 		// Under wine, small buffer sizes cause a lot of crackling, so we double the
