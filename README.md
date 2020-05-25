@@ -7,7 +7,14 @@ This Xbox port is a fork of [https://github.com/sulix/omnispeak/](https://github
 
 ## Building
 
-Setup and install nxdk. Refer to `https://github.com/XboxDev/nxdk`
+Setup and install nxdk. Refer to `https://github.com/XboxDev/nxdk`  
+We also need a experimental audio fix (until merged into master)
+```
+cd path/to/nxdk
+cd lib/sdl/SDL2
+git fetch origin pull/27/head:pr27
+git checkout pr27
+```
 
 Then do this:  
 ```
