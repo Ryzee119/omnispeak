@@ -2,6 +2,7 @@
 bin/
 .vscode/
 .github/
+keen_data/
 
 # Prerequisites
 *.d
