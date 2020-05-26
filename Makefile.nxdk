@@ -62,8 +62,9 @@ copy_resources:
 	@mkdir -p $(OUTPUT_DIR)
 	@mkdir -p $(OUTPUT_DIR)/keen_data
 	@mkdir -p $(OUTPUT_DIR)/omnispeak_data
-	@cp -r $(CURDIR)/xbox/ $(OUTPUT_DIR)/
-	@cp -r $(CURDIR)/keen_data/ $(OUTPUT_DIR)/
+	@mkdir -p $(OUTPUT_DIR)/xbox
+	@cp -r $(CURDIR)/xbox/* $(OUTPUT_DIR)/xbox/
+	@cp -r $(CURDIR)/keen_data/* $(OUTPUT_DIR)/keen_data/
 	@cp -r $(CURDIR)/data/keen4/* $(OUTPUT_DIR)/omnispeak_data/
 	@cp -r $(CURDIR)/data/keen5/* $(OUTPUT_DIR)/omnispeak_data/
 	@cp -r $(CURDIR)/data/keen6e15/* $(OUTPUT_DIR)/omnispeak_data/
