@@ -402,6 +402,9 @@ bool US_LineInput(uint16_t x, uint16_t y, char *buf, char *def, bool escok, uint
 	IN_SetLastASCII(IN_KP_None);
 	IN_SetLastScan(IN_SC_None);
 
+	static char virtual_char[2] = {'A','\0'};
+	VHB_DrawPropString(virtual_char, 20, 20, us_printFont, us_printColour);
+
 	while (!done)
 	{
 		// TODO/FIXME: Handle this in a possibly better way
@@ -419,6 +422,25 @@ bool US_LineInput(uint16_t x, uint16_t y, char *buf, char *def, bool escok, uint
 
 		switch (sc)
 		{
+		case IN_SC_Insert:
+			c = virtual_char[0];
+			break;
+		case IN_SC_UpArrow:
+			if (virtual_char[0] < 'z'){
+				VHB_DrawPropString(virtual_char, 20, 20, us_printFont, us_printColour); //Erase old
+				virtual_char[0]++;
+				VHB_DrawPropString(virtual_char, 20, 20, us_printFont, us_printColour); //Write new
+			}
+			c = 0;
+			break;
+		case IN_SC_DownArrow:
+			if (virtual_char[0] > '0'){
+				VHB_DrawPropString(virtual_char, 20, 20, us_printFont, us_printColour);
+				virtual_char[0]--;
+				VHB_DrawPropString(virtual_char, 20, 20, us_printFont, us_printColour);
+			}
+			c = 0;
+			break;
 		case IN_SC_LeftArrow:
 			if (cursor)
 				cursor--;
@@ -478,11 +500,8 @@ bool US_LineInput(uint16_t x, uint16_t y, char *buf, char *def, bool escok, uint
 			break;
 
 		case 0x4c: // Keypad 5
-		case IN_SC_UpArrow:
-		case IN_SC_DownArrow:
 		case IN_SC_PgUp:
 		case IN_SC_PgDown:
-		case IN_SC_Insert:
 			c = 0;
 			break;
 		}

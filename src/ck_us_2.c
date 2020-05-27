@@ -432,11 +432,6 @@ void save_savegame_item(US_CardItem *item)
 	i = item - ck_us_loadSaveMenuItems;
 	e = &us_savefiles[i];
 
-	#ifdef NXDK
-	//Bypass keyboard input on Xbox
-	strcpy(e->name, "XboxSave");
-	n = 1;
-	#else
 	/* Prompt the user to enter a name */
 	US_SetPrintColour(2);
 	//fontcolour = 2;
@@ -447,7 +442,7 @@ void save_savegame_item(US_CardItem *item)
 	/* If they entered no name, give a default */
 	if (strlen(e->name) == 0)
 		strcpy(e->name, "Untitled");
-	#endif
+
 	/* If the input was not canceled */
 	if (n != 0)
 	{

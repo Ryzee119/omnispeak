@@ -44,7 +44,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <hal/xbox.h>
 #include <hal/video.h>
 #include <hal/debug.h>
-extern uint8_t* _fb;
 #endif
 
 #ifdef WITH_SDL
@@ -367,7 +366,7 @@ void CK_InitGame()
 	IN_SetJoyConf(IN_joy_jump, IN_joy_jump);
 	IN_SetJoyConf(IN_joy_pogo, IN_joy_pogo);
 	IN_SetJoyConf(IN_joy_fire, IN_joy_fire);
-	IN_SetJoyConf(IN_joy_deadzone, 10);
+	IN_SetJoyConf(IN_joy_deadzone, 60); //Its a ratio to 200. 60/200 ~30%
 	#endif
 
 	// Create a surface for the dropdown menu
@@ -662,13 +661,18 @@ int main(int argc, char *argv[])
 	us_argc = argc;
 	us_argv = malloc(sizeof(const char *));
 	us_argv[0] = malloc(sizeof(const char *));
-	size_t fb_size = 640 * 480 * 2;
+	size_t fb_size = 640 * 480 * sizeof(uint16_t);
+	extern uint8_t* _fb;
 	_fb = (uint8_t*)MmAllocateContiguousMemoryEx(fb_size,
 												0,
 												0xFFFFFFFF,
 												0x1000,
 												PAGE_READWRITE | PAGE_WRITECOMBINE);
 	memset(_fb, 0x00, fb_size);
+
+	#define _PCRTC_START 0xFD600800
+	*(unsigned int*)(_PCRTC_START) = (unsigned int)_fb & 0x03FFFFFF;
+
 	XVideoSetMode(640, 480, 16, REFRESH_DEFAULT);
 
 	BOOL mounted = nxMountDrive('E', "\\Device\\Harddisk0\\Partition1\\");
@@ -680,26 +684,37 @@ int main(int argc, char *argv[])
 	//Copy title image to game profile
 	FILE* titleImageFileSrc = fopen("D:\\xbox\\TitleImage.xbx", "rb");
 	FILE* titleImageFileDest = fopen("E:\\UDATA\\Keen\\TitleImage.xbx", "wb");
-	int c = fgetc(titleImageFileSrc);
-	while (c != EOF){
-		fputc(c, titleImageFileDest);
-		c = fgetc(titleImageFileSrc);
+	if(titleImageFileSrc != NULL && titleImageFileDest != NULL){
+		int c = fgetc(titleImageFileSrc);
+		while (c != EOF){
+			fputc(c, titleImageFileDest);
+			c = fgetc(titleImageFileSrc);
+		}
 	}
-	fclose(titleImageFileDest);
-	fclose(titleImageFileSrc);
+	if(titleImageFileDest)
+		fclose(titleImageFileDest);
+	if(titleImageFileSrc)
+		fclose(titleImageFileSrc);
+
 
 	FILE* fp;
 	fp = fopen("E:\\UDATA\\Keen\\TitleMeta.xbx", "wb");
-	fprintf(fp, "TitleName=Commander Keen (omnispeak)\r\n");
-	fclose(fp);
+	if(fp){
+		fprintf(fp, "TitleName=Commander Keen (omnispeak)\r\n");
+		fclose(fp);
+	}
 
 	fp = fopen("E:\\UDATA\\Keen\\Saves\\SaveMeta.xbx", "wb");
-	fprintf(fp, "Name= Saves\r\n");
-	fclose(fp);
+	if(fp){
+		fprintf(fp, "Name=Saves\r\n");
+		fclose(fp);
+	}
 
 	fp = fopen("E:\\UDATA\\Keen\\Settings\\SaveMeta.xbx", "wb");
-	fprintf(fp, "Name= Settings\r\n");
-	fclose(fp);
+	if(fp){
+		fprintf(fp, "Name=Settings\r\n");
+		fclose(fp);
+	}
 
 #endif
 
@@ -734,6 +749,15 @@ int main(int argc, char *argv[])
 	SDL_Init(SDL_INIT_GAMECONTROLLER);
 	SDL_GameController* gamepad = SDL_GameControllerOpen(0);
 	SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
+
+	if(gamepad == NULL){
+		const char error_msg0[] = "No compatible controller connected.\n";
+		const char error_msg1[] = "Restart Xbox and try again\n";
+		debugPrint("\n\n\n\n");
+		nextCol = 640/2 - (strlen(error_msg0) * 8 / 2); debugPrint(error_msg0);
+		nextCol = 640/2 - (strlen(error_msg1) * 8 / 2); debugPrint(error_msg1);
+		while(1);
+	}
 	const char msg0[] = "Omnispeak - A Commander Keen Reimplementation\n\n\n";
 	const char msg1[] = "Press A to start Keen Episode 4\n\n";
 	const char msg2[] = "Press B to start Keen Episode 5\n\n";

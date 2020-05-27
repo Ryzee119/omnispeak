@@ -337,6 +337,10 @@ static void IN_SDL_HandleSDLEvent(SDL_Event *event)
 			sc = IN_SC_Escape;
 		if (jb_button->button == 3) //Y - Open Help Menu
 			sc = IN_SC_F1;
+		if (jb_button->button == 1 || jb_button->button == 2) //B or X
+			sc = IN_SC_Backspace;
+		if (jb_button->button == 0) //A
+			sc = IN_SC_Insert;
 
 		if(event->type == SDL_JOYBUTTONDOWN && sc != IN_SC_None){
 			IN_HandleKeyDown(sc, false);
@@ -346,19 +350,48 @@ static void IN_SDL_HandleSDLEvent(SDL_Event *event)
 		break;
 	case SDL_JOYHATMOTION:
 		sc = IN_SC_None;
+		static uint8_t previous_hat;
+		uint8_t pressed = 0;
 		jb_hat = (SDL_JoyHatEvent*)event;
-		if (jb_hat->value & SDL_HAT_UP)
-			sc = IN_SC_UpArrow;
-		if (jb_hat->value & SDL_HAT_DOWN)
-			sc = IN_SC_DownArrow;
-		if (jb_hat->value & SDL_HAT_LEFT)
-			sc = IN_SC_LeftArrow;
-		if (jb_hat->value & SDL_HAT_RIGHT)
-			sc = IN_SC_RightArrow;
 
-		if(sc != IN_SC_None){
-			IN_HandleKeyDown(sc, false);
+		if (jb_hat->value & SDL_HAT_UP){
+			sc = IN_SC_UpArrow;
+			pressed = 1;
+		} else if (previous_hat & SDL_HAT_UP){
+			sc = IN_SC_UpArrow;
+			pressed = 0;
 		}
+
+		if (jb_hat->value & SDL_HAT_DOWN){
+			sc = IN_SC_DownArrow;
+			pressed = 1;
+		} else if (previous_hat & SDL_HAT_DOWN){
+			sc = IN_SC_DownArrow;
+			pressed = 0;
+		}
+
+		if (jb_hat->value & SDL_HAT_LEFT){
+			sc = IN_SC_LeftArrow;
+			pressed = 1;
+		} else if (previous_hat & SDL_HAT_LEFT){
+			sc = IN_SC_LeftArrow;
+			pressed = 0;
+		}
+
+		if (jb_hat->value & SDL_HAT_RIGHT){
+			sc = IN_SC_RightArrow;
+			pressed = 1;
+		} else if (previous_hat & SDL_HAT_RIGHT){
+			sc = IN_SC_RightArrow;
+			pressed = 0;
+		}
+
+		if(pressed && sc != IN_SC_None){
+			IN_HandleKeyDown(sc, false);
+		} else if (sc != IN_SC_None){
+			IN_HandleKeyUp(sc, false);
+		}
+		previous_hat = jb_hat->value;
 
 		break;
 #endif

@@ -1036,7 +1036,16 @@ void US_RunCards()
 			IN_Cursor cursor;
 			IN_ReadCursor(&cursor);
 
-			controller_dy += cursor.yMotion * 2;
+			if(cursor.yMotion == 0){
+				controller_dy = 0;
+			}
+
+			if(controller_dy == 0){
+				if(cursor.yMotion > 0)
+					controller_dy = 100;
+				if(cursor.yMotion < 0)
+					controller_dy = -100;
+			}
 
 			if (cursor.button0)
 			{
@@ -1062,13 +1071,13 @@ void US_RunCards()
 			}
 			else if (controller_dy < -40)
 			{
-				controller_dy += 40;
+				controller_dy = 1;
 				US_SelectPrevItem();
 				action_taken = true;
 			}
 			else if (controller_dy > 40)
 			{
-				controller_dy -= 40;
+				controller_dy = 1;
 				US_SelectNextItem();
 				action_taken = true;
 			}

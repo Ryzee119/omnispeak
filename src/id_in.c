@@ -590,7 +590,9 @@ void IN_ReadCursor(IN_Cursor *cursor)
 	if (in_controlType == IN_ctrl_Joystick1 || in_controlType == IN_ctrl_Joystick2)
 	{
 		int joy = in_controlType - IN_ctrl_Joystick1;
+		#ifndef NXDK
 		In_GetJoyMotion(joy, &cursor->xMotion, &cursor->yMotion);
+		#endif
 		uint16_t buttons = IN_GetJoyButtonsDB(joy);
 		/* TODO: maybe ignore button mappings in the menu and
 		 *       map _all_ buttons to button0? */
