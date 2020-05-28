@@ -51,3 +51,23 @@ GAMEMAPS.CK5, EGAGRAPH.CK5, AUDIO.CK5
 To play Keen6 you need these files:
 GAMEMAPS.CK6, EGAGRAPH.CK6, AUDIO.CK6
 ```
+
+The output folder structuce should look something like this
+```
+default.xbe
+LICENSE.txt
+
+keen_data/
+--AUDIO.CK4
+--EGAGRAPH.CK4
+--GAMEMAPS.CK4
+--etc.
+
+omnispeak_data/
+--ACTION.CK4
+--etc.
+
+xbox/
+--TitleImage.xbx
+--TitleImage.jpg
+```
