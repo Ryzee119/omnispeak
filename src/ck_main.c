@@ -661,6 +661,9 @@ int main(int argc, char *argv[])
 	us_argc = argc;
 	us_argv = malloc(sizeof(const char *));
 	us_argv[0] = malloc(sizeof(const char *));
+
+	XVideoSetMode(640, 480, 16, REFRESH_DEFAULT);
+
 	size_t fb_size = 640 * 480 * sizeof(uint16_t);
 	extern uint8_t* _fb;
 	_fb = (uint8_t*)MmAllocateContiguousMemoryEx(fb_size,
@@ -672,8 +675,6 @@ int main(int argc, char *argv[])
 
 	#define _PCRTC_START 0xFD600800
 	*(unsigned int*)(_PCRTC_START) = (unsigned int)_fb & 0x03FFFFFF;
-
-	XVideoSetMode(640, 480, 16, REFRESH_DEFAULT);
 
 	BOOL mounted = nxMountDrive('E', "\\Device\\Harddisk0\\Partition1\\");
 	assert(mounted);
